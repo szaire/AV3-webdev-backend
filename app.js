@@ -140,6 +140,11 @@ router.put("/bets/:id", async function (req, res, next) {
       .collection("matches")
       .findOne({ _id: new ObjectId(bet._id_match) });
 
+    const user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(bet._id_user) });
+
+    // Ajuste automático de informação
     betReq.nome_timeA = match.nome_timeA;
     betReq.nome_timeB = match.nome_timeB;
     betReq.odd_timeA = match.odd_timeA;
@@ -150,6 +155,8 @@ router.put("/bets/:id", async function (req, res, next) {
 
     let valorB = Math.round(bet.valor_aposta_timeB * betReq.odd_timeB);
     betReq.valor_vencedor_timeB = valorB;
+
+    betReq.conta_associada = user.nome_usuario;
 
     res.json(
       await db
